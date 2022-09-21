@@ -31,7 +31,7 @@
 	.nav-list {
 		display: flex;
 		justify-content: space-around;
-		margin: 15px 0;
+		margin: 30rpx 0;
 
 		.nav-img {
 			width: 128rpx;
