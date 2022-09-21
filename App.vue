@@ -16,17 +16,44 @@
 	/*每个页面公共css */
 	@import '@/uni_modules/uni-scss/index.scss';
 	/* #ifndef APP-NVUE */
-	@import '@/static/customicons.css';
-
-	// 设置整个项目的背景色
-	page {
-		background-color: #f5f5f5;
-	}
+	// @import '@/static/customicons.css';
 
 	/* #endif */
 	.example-info {
 		font-size: 14px;
 		color: #333;
 		padding: 10px;
+	}
+
+	/* 初始化标签,并指定盒子模型 */
+	page,
+	view,
+	text,
+	swiper-item,
+	image,
+	navigator {
+		padding: 0;
+		margin: 0;
+		box-sizing: border-box;
+	}
+
+	page {
+		--themeColor: #eb2d21;
+		--backgroundColor: #eeedeb;
+		--deepFontColor: #343434;
+		--fontColor: #5a5a5a;
+		/* 默认设置 */
+		color: var(--fontColor);
+		background-color: var(--backgroundColor);
+		font-size: 28rpx;
+		height: 100%;
+	}
+
+	/* 去除滚动条 */
+	::-webkit-scrollbar {
+		display: none;
+		width: 0;
+		height: 0;
+		color: transparent;
 	}
 </style>

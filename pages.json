@@ -2,7 +2,7 @@
 	"pages": [{
 		"path": "pages/home/home",
 		"style": {
-			"navigationBarTitleText": "首页",
+			"navigationBarTitleText": "优易购",
 			"enablePullDownRefresh": false
 		}
 
@@ -26,8 +26,27 @@
 			"navigationBarTitleText": "我的",
 			"enablePullDownRefresh": false
 		}
-
 	}],
+	"subPackages": [{
+		"root": "subpkg",
+		"pages": [{
+			"path": "goods_detail/goods_detail",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}    ,{
+                    "path" : "goods_list/goods_list",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
+	}],
+
 	"tabBar": {
 		"list": [{
 				"pagePath": "pages/home/home",
@@ -57,7 +76,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "JD",
+		"navigationBarTitleText": "优易购",
 		"navigationBarBackgroundColor": "#C00000",
 		"backgroundColor": "#F8F8F8",
 		"app-plus": {
