@@ -19,3 +19,18 @@
 		}
 	}
 </script>
+
+<style lang="scss">
+	swiper {
+		padding: 15rpx 0;
+
+		.swiper-item {
+			padding: 0 15rpx;
+		}
+
+		.swiper-item,
+		image {
+			border-radius: 30rpx;
+		}
+	}
+</style>

@@ -13,3 +13,5 @@ export const reqPublicCategoriesList = () => $http.get('/api/public/v1/categorie
 export const reqGoodsQsSearchList = (params) => $http.get('/api/public/v1/goods/qsearch', params)
 
 export const reqGoodsSearchList = (params) => $http.get('/api/public/v1/goods/search', params)
+
+export const reqGoodsDetail = (params) => $http.get('/api/public/v1/goods/detail', params)

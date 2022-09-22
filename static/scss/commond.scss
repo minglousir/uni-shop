@@ -1,19 +1,12 @@
 /* 轮播图 */
 swiper {
 	height: 250rpx;
-	padding: 15rpx 0;
-
+	
 	swiper-item {
 		overflow: hidden;
 	}
-
-	.swiper-item {
-		padding: 0 15rpx;
-	}
-
 	.swiper-item,
 	image {
-		border-radius: 30rpx;
 		width: 100%;
 		height: 100%;
 	}

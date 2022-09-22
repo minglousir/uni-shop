@@ -1,9 +1,10 @@
 <template>
 	<view>
 		<view class="goods-list">
-			<block v-for="(goods, i) in goodsList" :key="i" @click="gotoDetail(item)">
+			<!-- <block/> 并不是一个组件，它仅仅是一个包装元素，不会在页面中做任何渲染，只接受控制属性。 -->
+			<view v-for="(goods, i) in goodsList" :key="i" @click="gotoDetail(goods)">
 				<GoodsListItem :goods="goods" :defaultPic="defaultPic" />
-			</block>
+			</view>
 		</view>
 	</view>
 </template>
@@ -16,8 +17,8 @@
 		},
 		data() {
 			return {
-				// 默认的空图片 
-				defaultPic: 'https://img95.699pic.com/photo/40195/5459.jpg_wh860.jpg',
+				// 默认的空图片 ,最好不要直接拿网上链接,会被拦截
+				defaultPic: '../../static/images/defaultImg.jpg',
 				// 请求参数对象
 				queryObj: {
 					// 不存在发请求的时候会自动剔除
