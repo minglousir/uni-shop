@@ -9,3 +9,5 @@ export const reqHomeFloordataList = () => $http.get('/api/public/v1/home/floorda
 export const reqCategoriesList = () => $http.get('/api/public/v1/categories')
 
 export const reqPublicCategoriesList = () => $http.get('/api/public/v1/categories')
+
+export const reqGoodsQsSearchList = (params) => $http.get('/api/public/v1/goods/qsearch', params)

@@ -1,5 +1,9 @@
 <template>
 	<view>
+		<!-- 搜索组件-这个定位不要放到自定义组件身上,要不会被看成props -->
+		<view class="search-box">
+			<my-search @click="gotoSearch" />
+		</view>
 		<!-- 轮播图区域 -->
 		<MySwiper :swiperList="swiperList" />
 		<!-- 分类导航区域 -->
@@ -10,6 +14,7 @@
 </template>
 
 <script>
+	import MySearch from "@/components/search/my-search/my-search.vue"
 	import MySwiper from "@/components/home/MySwiper.vue"
 	import NavItem from "@/components/home/NavItem.vue"
 	import Floor from "@/components/home/Floor.vue"
@@ -27,7 +32,8 @@
 		components: {
 			MySwiper,
 			NavItem,
-			Floor
+			Floor,
+			MySearch
 		},
 		data() {
 			return {
@@ -78,6 +84,12 @@
 				})
 				this.floorList = res.message
 			},
+			// 跳转到分包中的搜索页面
+			gotoSearch() {
+				uni.navigateTo({
+					url: '/subpkg/search/search'
+				})
+			}
 		}
 	}
 </script>
