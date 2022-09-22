@@ -48,12 +48,4 @@
 		font-size: 28rpx;
 		height: 100%;
 	}
-
-	/* 去除滚动条 */
-	::-webkit-scrollbar {
-		display: none;
-		width: 0;
-		height: 0;
-		color: transparent;
-	}
 </style>

@@ -21,8 +21,8 @@
 				<uni-icons type="trash" size="25" @click="clean"></uni-icons>
 			</view>
 			<!-- 列表区域 -->
-			<view class="history-list">
-				<uni-tag :text="item" v-for="(item, i) in histories" :key="i" @click="gotoGoodsList(item)"></uni-tag>
+			<view class="history-list" @click="gotoGoodsList($event)">
+				<uni-tag :text="item" v-for="(item, i) in histories" :key="i" :data-kw="item"></uni-tag>
 			</view>
 		</view>
 	</view>
@@ -93,9 +93,9 @@
 				this.historyList = []
 				uni.setStorageSync('kw', '[]')
 			},
-			gotoGoodsList(kw) {
+			gotoGoodsList(e) {
 				uni.navigateTo({
-					url: '/subpkg/goods_list/goods_list?query=' + kw
+					url: '/subpkg/goods_list/goods_list?query=' + e.target.dataset.kw
 				})
 			}
 		},
