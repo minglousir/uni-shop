@@ -39,7 +39,7 @@
 
 	page {
 		--themeColor: #eb2d21;
-		--backgroundColor: #eeedeb;
+		--backgroundColor: #fff;
 		--deepFontColor: #343434;
 		--fontColor: #5a5a5a;
 		/* 默认设置 */

@@ -18,6 +18,7 @@
 	import MySwiper from "@/components/home/MySwiper.vue"
 	import NavItem from "@/components/home/NavItem.vue"
 	import Floor from "@/components/home/Floor.vue"
+	import badgeMix from '@/mixins/tabbar-badge.js'
 	// 小程序不支持这样子引入
 	// import {
 	// 	importComponents
@@ -29,6 +30,7 @@
 	// );
 	// const comObj = importComponents(requireComponent)
 	export default {
+		mixins: [badgeMix],
 		components: {
 			MySwiper,
 			NavItem,

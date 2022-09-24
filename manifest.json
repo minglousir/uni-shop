@@ -55,7 +55,8 @@
 			"urlCheck": false,
 			"es6": true
 		},
-		"usingComponents": true
+		"usingComponents": true,
+		"requiredPrivateInfos": ["getLocation", "chooseLocation", "chooseAddress"]
 	},
 	"vueVersion": "2"
 }

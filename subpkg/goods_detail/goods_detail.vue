@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view style="background-color: #fff;">
 		<!-- 轮播图区域 这里出现渲染层出错是因为有些商品没有图片,代码是没问题,也不是编译器问题-->
 		<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
 			<swiper-item v-for="(item, i) in goods_info.pics" :key="i">
@@ -8,13 +8,13 @@
 			</swiper-item>
 		</swiper>
 		<!-- 商品信息区域 -->
-		<view class="goods-info-box">
+		<view class="goods-info-box" v-if="goods_info.goods_name">
 			<!-- 商品价格 -->
-			<view class="price" v-if="goods_info.goods_name">￥{{goods_info.goods_price.toFixed(2)}}</view>
+			<view class="price">￥{{goods_info.goods_price.toFixed(2)}}</view>
 			<!-- 信息主体区域 -->
 			<view class="goods-info-body">
 				<!-- 商品名称 解决名字闪烁-->
-				<view class="goods-name" v-if="goods_info.goods_name">{{goods_info.goods_name}}</view>
+				<view class="goods-name">{{goods_info.goods_name}}</view>
 				<!-- 收藏 -->
 				<view class="favi">
 					<uni-icons type="star" size="18" color="gray"></uni-icons> <text>收藏</text>
@@ -39,6 +39,11 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations,
+		mapGetters
+	} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -53,7 +58,7 @@
 				}, {
 					icon: 'cart',
 					text: '购物车',
-					info: 2
+					info: 0
 				}],
 				// 右侧按钮组的配置对象 
 				buttonGroup: [{
@@ -72,6 +77,24 @@
 			const goods_id = options.goods_id
 			// 调用请求商品详情数据的方法 
 			this.getGoodsDetail(goods_id)
+		},
+		computed: {
+			...mapState('cart', ['cart']),
+			...mapGetters('cart', ['cartGoodsItemTotal'])
+		},
+		watch: {
+			// 1. 监听 total 值的变化，通过第一个形参得到变化后的新值 
+			cartGoodsItemTotal: {
+				handler(newVal, oldVal) {
+					// 2. 通过数组的 find() 方法，找到购物车按钮的配置对象
+					const findResult = this.options.find((x) => x.text === '购物车')
+					if (findResult) {
+						// 3. 动态为购物车按钮的 info 属性赋值
+						findResult.info = newVal
+					}
+				},
+				immediate: true
+			},
 		},
 		methods: {
 			// 定义请求商品详情数据的方法 
@@ -107,7 +130,29 @@
 						url: '/pages/cart/cart'
 					})
 				}
+			},
+			...mapMutations('cart', ['ADDTOCART']),
+			// 右侧按钮的点击事件处理函数 
+			buttonClick(e) {
+				// 1. 判断是否点击了 加入购物车 按钮 
+				if (e.content.text === '加入购物车') {
+					const {
+						goods_info
+					} = this
+					// 2. 组织一个商品的信息对象 
+					const goods = {
+						goods_id: goods_info.goods_id, // 商品的Id 
+						goods_name: goods_info.goods_name, // 商品的名称 
+						goods_price: goods_info.goods_price, // 商品的价格 
+						goods_count: 1, // 商品的数量 
+						goods_small_logo: goods_info.goods_small_logo, // 商品的图片
+						goods_state: true, // 商品的勾选状态 
+					}
+					// 3. 通过 this 调用映射过来的 addToCart 方法， 把商品信息对象存储到购物车中, 这是其中一种方式
+					this.ADDTOCART(goods)
+				}
 			}
+
 		}
 
 	}
