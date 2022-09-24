@@ -42,6 +42,9 @@
 				historyList: []
 			};
 		},
+		onLoad() {
+			this.historyList = JSON.parse(uni.getStorageSync('kw') || '[]')
+		},
 		methods: {
 			input(e) {
 				// 清除 timer 对应的延时器 
@@ -169,6 +172,7 @@
 		.history-list {
 			display: flex;
 			flex-wrap: wrap;
+			margin-top: 30rpx;
 
 			.uni-tag {
 				margin-top: 10rpx;
