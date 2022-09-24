@@ -1,29 +1,35 @@
 <template>
 	<!-- 最外层的容器 -->
-	<view class="my-settle-container" v-if="cart.length !== 0">
+	<view class="my-settle-container">
 		<!-- 全选区域 -->
 		<label class="radio" @click="changeAllState">
 			<radio color="#C00000" :checked="isFullChecked" /><text>全选</text>
 		</label> <!-- 合计区域 -->
 		<view class="amount-box"> 合计:<text class="amount">{{checkedGoodsAmount}}</text> </view> <!-- 结算按钮 -->
-		<view class="btn-settle">结算({{checkedCount}})</view>
+		<view class="btn-settle" @click="settlement">结算({{checkedCount}})</view>
 	</view>
-	<!-- 空白购物车区域 -->
-	<view class="empty-cart" v-else>
-		<image src="/static/cart_empty@2x.png" class="empty-img"></image> <text class="tip-text">空空如也~</text>
-	</view>
+
 </template>
 <script>
 	import {
 		mapGetters,
-		mapActions
+		mapActions,
+		mapState,
+		mapMutations
 	} from 'vuex'
 	export default {
 		data() {
-			return {}
+			return {
+				// 倒计时的秒数 
+				seconds: 3,
+				// 定时器的 Id 
+				timer: null,
+			}
 		},
 		computed: {
 			...mapGetters('cart', ['checkedCount', 'cartGoodsTotal', 'checkedGoodsAmount']),
+			...mapState('user', ['token']),
+			...mapGetters('user', ['addstr']),
 			// 是否全选
 			isFullChecked() {
 				return this.checkedCount === this.cartGoodsTotal
@@ -31,11 +37,118 @@
 		},
 		methods: {
 			...mapActions('cart', ['updateAllGoodsState']),
+			...mapMutations('user', ['updateRedirectInfo']),
 			changeAllState() {
 				this.updateAllGoodsState(!this.isFullChecked)
+			},
+			// 点击了结算按钮 
+			settlement() {
+				// 1. 先判断是否勾选了要结算的商品 
+				if (!this.checkedCount) return uni.$showMsg('请选择要结算的商品！')
+				// 2. 再判断用户是否选择了收货地址 
+				if (!this.addstr) return uni.$showMsg('请选择收货地址！')
+				// 3. 最后判断用户是否登录了 
+				// if (!this.token) return uni.$showMsg('请先登录！')
+				if (!this.token) return this.delayNavigate()
+				// 4. 实现微信支付功能 
+				this.payOrder()
+			},
+			async payOrder() {
+				// 1. 创建订单
+				// 1.1 组织订单的信息对象
+				const orderInfo = {
+					// order_price: this.checkedGoodsAmount,
+					order_price: 0.01,
+					consignee_addr: this.addstr,
+					goods: this.cart.filter(x => x.goods_state).map(x => ({
+						goods_id: x.goods_id,
+						goods_number: x.goods_count,
+						goods_price: x.goods_price
+					}))
+				}
+
+				// 1.2 发起请求创建订单
+				const {
+					data: res
+				} = await uni.$API.reqCreateOrders(orderInfo)
+				if (res.meta.status !== 200) return uni.$showMsg('创建订单失败！')
+
+				// 1.3 得到服务器响应的“订单编号”
+				const orderNumber = res.message.order_number
+
+				// 2. 订单预支付
+				// 2.1 发起请求获取订单的支付信息
+				const {
+					data: res2
+				} = await uni.$API.reqUnifiedOrder({
+					order_number: orderNumber
+				})
+				// 2.2 预付订单生成失败
+				if (res2.meta.status !== 200) return uni.$showMsg('预付订单生成失败！')
+				// 2.3 得到订单支付相关的必要参数
+				const payInfo = res2.message.pay
+
+				// 3. 发起微信支付
+				// 3.1 调用 uni.requestPayment() 发起微信支付
+				const [err, succ] = await uni.requestPayment(payInfo)
+				// 3.2 未完成支付
+				if (err) return uni.$showMsg('订单未支付！')
+				// 3.3 完成了支付，进一步查询支付的结果
+				const {
+					data: res3
+				} = await uni.$API.reqChkOrder({
+					order_number: orderNumber
+				})
+				// 3.4 检测到订单未支付
+				if (res3.meta.status !== 200) return uni.$showMsg('订单未支付！')
+				// 3.5 检测到订单支付完成
+				uni.showToast({
+					title: '订单支付完成！',
+					icon: 'success'
+				})
+			},
+			// 展示倒计时的提示消息 
+			showTips(n) {
+				// 调用 uni.showToast() 方法，展示提示消息 
+				uni.showToast({
+					// 不展示任何图标 
+					icon: 'none',
+					// 提示的消息 
+					title: '请登录后再结算！' + n + ' 秒后自动跳转到登录页',
+					// 为页面添加透明遮罩，防止点击穿透 
+					mask: true,
+					// 1.5 秒后自动消失
+					duration: 1500
+				})
+			},
+			// 延迟导航到 my 页面 
+			delayNavigate() {
+				// 把 data 中的秒数重置成 3 秒 
+				this.seconds = 3
+				this.showTips(this.seconds)
+				this.timer = setInterval(() => {
+					this.seconds--
+					if (this.seconds <= 0) {
+						clearInterval(this.timer)
+						uni.switchTab({
+							url: '/pages/my/my',
+							// 页面跳转成功之后的回调函数 
+							success: () => {
+								// 调用 vuex 的 updateRedirectInfo 方法，把跳转信息存储到 Store 中 
+								this.updateRedirectInfo({
+									// 跳转的方式
+									openType: 'switchTab',
+									// 从哪个页面跳转过去的
+									from: '/pages/cart/cart'
+								})
+							}
+						})
+						return
+					}
+					this.showTips(this.seconds)
+				}, 1000)
 			}
 		},
-
 	}
 </script>
 <style lang="scss">
@@ -69,24 +182,6 @@
 			line-height: 50px;
 			text-align: center;
 			padding: 0 10px;
-		}
-	}
-
-	.empty-cart {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding-top: 150px;
-
-		.empty-img {
-			width: 90px;
-			height: 90px;
-		}
-
-		.tip-text {
-			font-size: 12px;
-			color: gray;
-			margin-top: 15px;
 		}
 	}
 </style>

@@ -6,7 +6,7 @@ import {
 
 const getDefaultState = () => {
 	return {
-		cart: getStorageSync('cart')
+		cart: getStorageSync('cart', '[]')
 	}
 }
 

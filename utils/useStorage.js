@@ -25,8 +25,8 @@ export const getStorage = (key, cb) => {
 }
 
 // 同步
-export const getStorageSync = (key) => {
-	return JSON.parse(uni.getStorageSync(key) || '[]')
+export const getStorageSync = (key, init = '{}') => {
+	return JSON.parse(uni.getStorageSync(key) || init)
 }
 
 //清除Storage
